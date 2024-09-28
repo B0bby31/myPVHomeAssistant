@@ -9,7 +9,7 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 
-from .const import SENSOR_TYPES, DOMAIN, DATA_COORDINATOR, DEVICE_STATUS, WIFI_METER_NAME, WIFI_METER_SENSOR_TYPES
+from .const import SENSOR_TYPES, DOMAIN, DATA_COORDINATOR, DEVICE_STATUS, WIFI_METER_NAME, WIFI_METER_SENSOR_TYPES, DEVICE_STATUS_AC_ELWA_E
 from .coordinator import MYPVDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -94,7 +94,10 @@ class MypvDevice(CoordinatorEntity):
                 state = DEVICE_STATUS.get(self.hass.config.language, "en")[state]
             
             if self.type == "status":
-                state = DEVICE_STATUS.get(self.hass.config.language, "en")[state]
+                if state in DEVICE_STATUS_AC_ELWA_E.keys:
+                    state = DEVICE_STATUS_AC_ELWA_E[state]
+                else:
+                    state = "Unknown with code: " + state
 
             if self.type == "power_act":
                 relOut = int(self.coordinator.data[self._data_source].get("rel1_out", None))
